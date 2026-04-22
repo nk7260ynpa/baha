@@ -1,0 +1,62 @@
+# === Logs ===
+*.log
+logs/
+*.log.*
+
+# === Python ===
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Test / coverage
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+
+# === IDE / OS ===
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# === Secrets / 環境變數 ===
+.env
+.env.local
+.env.*.local
+*.pem
+credentials.json
+
+# === Docker ===
+# docker-compose override（個人本機客製化）
+docker-compose.override.yaml
+
+# === Claude / 個人偏好 ===
+# 個人本機偏好設定，不入版控
+.claude/settings.local.json
