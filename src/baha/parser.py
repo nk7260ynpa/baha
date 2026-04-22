@@ -1,17 +1,32 @@
-"""HTML 解析模組。
+r"""HTML 解析模組。
 
-將動畫瘋新番時刻表 HTML 解析為 :class:`ScheduleCard` 物件清單。
+將動畫瘋首頁（<https://ani.gamer.com.tw/>）HTML 解析為 :class:`ScheduleCard`
+物件清單。真實 DOM 結構如下：
+
+```
+.programlist-wrap
+  .programlist-wrap_block
+    .programlist-block
+      .day-list
+        h3.day-title              ← 文字「週一」…「週日」
+        a.text-anime-info         ← 每張卡片
+          span.text-anime-time    ← "HH:MM"
+          .text-anime-detail
+            p.text-anime-name     ← 片名
+            p.text-anime-number   ← "第 N 集" / "特別篇" 等
+```
 
 解析策略：
 
-* 僅在 ``.schedule-week .animate-theme-list`` 範圍內搜尋卡片，避開側欄、
-  廣告、登入提示等含類似 class 但非時刻表的區塊。
-* 透過 ``.schedule-week[data-week]`` 取得週幾（1=週一 … 7=週日，內部減一
-  轉為 Python weekday 慣例 0..6）。
-* 片名透過 ``strip()`` 去除前後空白；集數若形如「第 01 集」則抽取出 ``"01"``，
-  若為「特別篇」等非數字標籤則原樣保留。
-* 結構不完整（缺任一必要欄位）的卡片略過並以 WARN 記錄前 200 字原始片段；
-  輸入 HTML 完全不像時刻表時回傳空清單並以 ERROR 記錄前 2048 字以供除錯。
+* 以 ``soup.select_one(".programlist-wrap")`` 為入口；找不到即 ERROR log
+  HTML 前 2048 字元並回傳 ``[]``。
+* ``h3.day-title`` 文字以 ``{"週一":0 … "週日":6}`` 映射，未命中的 day-list
+  整段略過並記 WARN。
+* 每張 ``a.text-anime-info`` 卡片逐一擷取時段 / 片名 / 集數；缺任一子節點
+  或時段不符 ``^\d{2}:\d{2}$`` 即 WARN 略過該卡片，不影響同 day-list
+  其他卡片。
+* 片名僅做 ``strip()``；集數形如「第 N 集」抽取中間數字，其餘（「特別篇」、
+  「OVA」等）保留 ``strip()`` 後原字串。
 """
 
 from __future__ import annotations
@@ -44,104 +59,125 @@ class ScheduleCard:
 
 
 _HHMM_PATTERN = re.compile(r"^\d{2}:\d{2}$")
-# 「第 01 集」「第01集」「第 1 集」皆抽取中間的數字字串。
-_EPISODE_NUMBER_PATTERN = re.compile(r"^第\s*(\d+)\s*集$")
+# 「第 01 集」「第01集」「第 1 集」皆抽取中間的核心字串（可能含空白）。
+_EPISODE_NUMBER_PATTERN = re.compile(r"^第\s*(\S+)\s*集$")
+
+_WEEKDAY_MAP: dict[str, int] = {
+    "週一": 0,
+    "週二": 1,
+    "週三": 2,
+    "週四": 3,
+    "週五": 4,
+    "週六": 5,
+    "週日": 6,
+}
 
 
 def _clean_episode(raw: str) -> str:
-    """清洗集數字串：「第 XX 集」→ ``"XX"``；特別篇／OVA 等原樣保留。"""
+    """清洗集數字串。
+
+    規則：
+
+    * 「第 N 集」→ 取中間群組並去除內部空白（``"第 01 集"`` → ``"01"``）。
+    * 其餘（「特別篇」「OVA」等）→ 保留 ``strip()`` 後原字串。
+    """
     text = raw.strip()
     match = _EPISODE_NUMBER_PATTERN.match(text)
     if match:
-        return match.group(1)
+        core = match.group(1)
+        return re.sub(r"\s+", "", core)
     return text
 
 
-def _extract_text(tag: Optional[Tag], selector: str) -> Optional[str]:
-    """從 ``tag`` 之下以 CSS selector 抓第一個元素的文字，找不到回傳 None。"""
-    if tag is None:
-        return None
-    found = tag.select_one(selector)
+def _extract_text(parent: Tag, selector: str) -> Optional[str]:
+    """從 ``parent`` 底下以 CSS selector 抓第一個元素的文字。
+
+    找不到元素時回傳 ``None``；元素存在則回傳原始文字（未 strip）。
+    """
+    found = parent.select_one(selector)
     if found is None:
         return None
     return found.get_text(strip=False)
 
 
-def _parse_weekday(section: Tag) -> Optional[int]:
-    """從 ``.schedule-week[data-week]`` 取得 1..7，轉為 0..6；失敗回傳 None。"""
-    raw = section.get("data-week")
-    if raw is None:
-        return None
-    try:
-        number = int(str(raw).strip())
-    except ValueError:
-        return None
-    if not 1 <= number <= 7:
-        return None
-    return number - 1
+def _parse_card(weekday: int, card: Tag) -> Optional[ScheduleCard]:
+    """解析單張 ``a.text-anime-info`` 卡片。
 
+    結構不完整或時段不合法時回傳 ``None`` 並記 WARN。
+    """
+    time_raw = _extract_text(card, "span.text-anime-time")
+    name_raw = _extract_text(card, "p.text-anime-name")
+    number_raw = _extract_text(card, "p.text-anime-number")
 
-def _parse_card(section_weekday: int, card: Tag) -> Optional[ScheduleCard]:
-    """解析單張卡片；結構不完整回傳 None 並記 WARN。"""
-    title_raw = _extract_text(card, ".theme-name")
-    number_raw = _extract_text(card, ".theme-number")
-    time_raw = _extract_text(card, ".theme-time")
-
-    if title_raw is None or number_raw is None or time_raw is None:
+    if time_raw is None or name_raw is None or number_raw is None:
         snippet = card.decode()[:200]
-        logger.warning("卡片結構不完整，已略過；片段=%r", snippet)
+        logger.warning("卡片結構不完整，已略過；片段=%s", snippet)
         return None
 
-    title = title_raw.strip()
-    episode = _clean_episode(number_raw)
     hhmm = time_raw.strip()
+    if not _HHMM_PATTERN.match(hhmm):
+        logger.warning(
+            "卡片時段不合法，已略過；hhmm=%r name=%r",
+            hhmm, name_raw.strip(),
+        )
+        return None
 
-    if not title or not episode or not _HHMM_PATTERN.match(hhmm):
+    title = name_raw.strip()
+    episode = _clean_episode(number_raw)
+
+    if not title or not episode:
         snippet = card.decode()[:200]
         logger.warning(
-            "卡片欄位不合法已略過；title=%r episode=%r hhmm=%r 片段=%s",
-            title, episode, hhmm, snippet,
+            "卡片欄位清洗後為空，已略過；title=%r episode=%r 片段=%s",
+            title, episode, snippet,
         )
         return None
 
     return ScheduleCard(
         title=title,
         episode=episode,
-        weekday=section_weekday,
+        weekday=weekday,
         hhmm=hhmm,
     )
 
 
 def parse_schedule(html: str) -> list[ScheduleCard]:
-    """解析時刻表 HTML 為 :class:`ScheduleCard` 清單。
+    """解析首頁 HTML 為 :class:`ScheduleCard` 清單。
 
     Args:
-        html: 時刻表 HTML 原始字串。
+        html: 動畫瘋首頁 HTML 原始字串。
 
     Returns:
-        合法卡片清單；若 HTML 為空或明顯不符合時刻表結構則回傳 ``[]``。
+        合法卡片清單；HTML 為空或不含 ``.programlist-wrap`` 時回傳 ``[]``
+        並以 ERROR 等級記錄前 2048 字元以供除錯。
     """
     if not isinstance(html, str) or html.strip() == "":
-        logger.error("解析失敗：輸入 HTML 為空；前 2048 字元=%r", html[:2048] if isinstance(html, str) else "")
+        snippet = html[:2048] if isinstance(html, str) else ""
+        logger.error(
+            "解析失敗：找不到 .programlist-wrap 區塊（輸入為空）；前 2048 字元=%r",
+            snippet,
+        )
         return []
 
     soup = BeautifulSoup(html, "lxml")
-    sections = soup.select(".schedule-week")
-
-    if not sections:
+    wrap = soup.select_one(".programlist-wrap")
+    if wrap is None:
         logger.error(
-            "解析失敗：找不到 .schedule-week 區塊；前 2048 字元=%s",
+            "解析失敗：找不到 .programlist-wrap 區塊；前 2048 字元=%s",
             html[:2048],
         )
         return []
 
     results: list[ScheduleCard] = []
-    for section in sections:
-        weekday = _parse_weekday(section)
+    for day_list in wrap.select(".day-list"):
+        title_tag = day_list.select_one("h3.day-title")
+        day_text = title_tag.get_text(strip=True) if title_tag is not None else ""
+        weekday = _WEEKDAY_MAP.get(day_text)
         if weekday is None:
-            logger.warning("schedule-week 缺少合法 data-week，略過整個 section")
+            logger.warning("無法識別的 day-title=%r，略過該 day-list", day_text)
             continue
-        cards = section.select(".animate-theme-list .theme-list-block")
+
+        cards = day_list.select("a.text-anime-info")
         for card in cards:
             parsed = _parse_card(weekday, card)
             if parsed is not None:

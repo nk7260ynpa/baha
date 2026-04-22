@@ -70,7 +70,7 @@
   - `grep -c 'class="text-anime-info"' tests/fixtures/animeList_sample.html` >= 10。
   - 檔頭註解存在且指出來源與清理動作。
 
-- [ ] 10.2 重寫 `src/baha/parser.py`，完全對齊 spec.md Requirement 2 的新 DOM 結構：
+- [x] 10.2 重寫 `src/baha/parser.py`，完全對齊 spec.md Requirement 2 的新 DOM 結構：
   - 入口：定位 `soup.select_one(".programlist-wrap")`，找不到時以 ERROR log HTML 前 2048 字元並回傳 `[]`。
   - 迭代 `.programlist-wrap .day-list`，對每個 `.day-list`：
     - 讀 `h3.day-title` 文字，依 `{"週一":0, "週二":1, "週三":2, "週四":3, "週五":4, "週六":5, "週日":6}` 映射；未命中 → WARN（含原始文字）並略過該 `.day-list`。
