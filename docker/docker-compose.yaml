@@ -14,8 +14,11 @@ services:
       MARIADB_USER: ${DB_USER:-baha}
       MARIADB_PASSWORD: ${DB_PASSWORD:-changeme}
       MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-rootchangeme}
+    # host port 可由 .env 的 MARIADB_HOST_PORT 覆寫，預設 3307 以避免與
+    # 宿主機上其他長駐 MariaDB/MySQL（常佔 3306）衝突。app service 透過
+    # compose 內部網路以服務名稱 mariadb:3306 連線，不依賴此 host 綁定。
     ports:
-      - "3306:3306"
+      - "${MARIADB_HOST_PORT:-3307}:3306"
     volumes:
       - baha_mariadb_data:/var/lib/mysql
       - ./initdb:/docker-entrypoint-initdb.d:ro

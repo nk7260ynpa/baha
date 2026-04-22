@@ -57,6 +57,7 @@ baha/
 | `DB_USER` | 是 | `baha` | 連線使用者名稱。 |
 | `DB_PASSWORD` | 是 | `changeme` | 連線密碼；缺失時啟動立即 exit。 |
 | `DB_ROOT_PASSWORD` | 否 | `rootchangeme` | MariaDB container 初始化 root 密碼。 |
+| `MARIADB_HOST_PORT` | 否 | `3307` | MariaDB 對宿主機暴露的 port；僅供宿主直連除錯使用，不影響 app 與 mariadb container 之間的連線。若宿主機已有其他 MariaDB/MySQL 佔用 3306，維持預設 3307 或改為其他空閒 port 即可。 |
 | `LOG_LEVEL` | 否 | `INFO` | Python logging level，可選 `DEBUG`/`INFO`/`WARNING`/`ERROR`。 |
 
 ## 如何啟動（`./run.sh`）
@@ -69,6 +70,11 @@ baha/
    4. 以 `docker compose run --rm app python -m baha` 執行一次抓取。
 
 log 會同時輸出至 stdout 與 `logs/baha-YYYYMMDD.log`。
+
+> 預設 `MARIADB_HOST_PORT=3307`；若宿主機上有其他服務佔用該 port，請於
+> `.env` 改為未被占用的 port（例如 `MARIADB_HOST_PORT=33070`）。app 與
+> mariadb 之間為 compose 內部網路連線（`DB_HOST=mariadb`、`DB_PORT=3306`），
+> 不受此 host 綁定影響。
 
 首次建置 image 可先執行：
 
