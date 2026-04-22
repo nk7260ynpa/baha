@@ -20,8 +20,8 @@
 
 ## 4. 時間工具（純函式優先）
 
-- [ ] 4.1 實作 `src/baha/time_utils.py`：`to_air_datetime(weekday: int, hhmm: str, now: datetime) -> datetime`，依 D3 規則推算；`weekday` 0=週一 … 6=週日；非法輸入拋 `ValueError`。檔案範圍：`src/baha/time_utils.py`。驗收：`scraper-runtime` spec 中 `to_air_datetime` 四個 scenario 全部通過。
-- [ ] 4.2 撰寫 `tests/test_time_utils.py`：涵蓋同週未來、同週已過（差距 > 12 h）、同週剛過（差距 <= 12 h）、非法格式四個 scenario。檔案範圍：`tests/test_time_utils.py`、`tests/__init__.py`。驗收：`pytest tests/test_time_utils.py -v` 全綠。
+- [x] 4.1 實作 `src/baha/time_utils.py`：`to_air_datetime(weekday: int, hhmm: str, now: datetime) -> datetime`，依 D3 規則推算；`weekday` 0=週一 … 6=週日；非法輸入拋 `ValueError`。檔案範圍：`src/baha/time_utils.py`。驗收：`scraper-runtime` spec 中 `to_air_datetime` 四個 scenario 全部通過。
+- [x] 4.2 撰寫 `tests/test_time_utils.py`：涵蓋同週未來、同週已過（差距 > 12 h）、同週剛過（差距 <= 12 h）、非法格式四個 scenario。檔案範圍：`tests/test_time_utils.py`、`tests/__init__.py`。驗收：`pytest tests/test_time_utils.py -v` 全綠。
 
 ## 5. HTML 解析模組
 
