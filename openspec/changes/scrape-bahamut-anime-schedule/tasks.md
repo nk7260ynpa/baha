@@ -36,7 +36,7 @@
 
 ## 7. Storage 模組（含 upsert）
 
-- [ ] 7.1 實作 `src/baha/storage.py`：`class Storage`，`__init__(config)` 建立連線並設 `time_zone='+08:00'`；`upsert_records(records) -> UpsertStats`；使用 `INSERT ... ON DUPLICATE KEY UPDATE air_time=VALUES(air_time)` 並依 `ROW_COUNT()` 區分 inserted/updated/unchanged。檔案範圍：`src/baha/storage.py`。驗收：`anime-schedule-storage` spec 全部 scenario 成立。
+- [x] 7.1 實作 `src/baha/storage.py`：`class Storage`，`__init__(config)` 建立連線並設 `time_zone='+08:00'`；`upsert_records(records) -> UpsertStats`；使用 `INSERT ... ON DUPLICATE KEY UPDATE air_time=VALUES(air_time)` 並依 `ROW_COUNT()` 區分 inserted/updated/unchanged。檔案範圍：`src/baha/storage.py`。驗收：`anime-schedule-storage` spec 全部 scenario 成立。
 - [ ] 7.2 撰寫 `tests/test_storage.py`：
   - 單元測試以 mock `pymysql.connect` 驗證「空清單不發 SQL」「缺少環境變數拋 `ConfigError`」。
   - 整合測試（`@pytest.mark.integration`）連到 compose 的 mariadb，驗證 insert / update / unchanged 計數與 `SET time_zone='+08:00'`。
