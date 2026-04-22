@@ -102,7 +102,7 @@
 
   檔案範圍：`tests/test_parser.py`。驗收：`docker compose run --rm app pytest tests/test_parser.py -v` 全綠並達覆蓋率。
 
-- [ ] 10.5 驗證 `tests/test_pipeline.py` 與新 fixture 相容：
+- [x] 10.5 驗證 `tests/test_pipeline.py` 與新 fixture 相容：
   - 若既有測試以 fixture 計算期望筆數、抽樣特定片名／集數，須依新 fixture 重算期望值。
   - 「部分解析錯誤不中斷」scenario 若原本以舊 DOM 合成片段測試，改以「新 fixture 加上一張故意缺欄位的 `a.text-anime-info`」的變體覆蓋。
   - 「`ScrapeEmptyError`」scenario 可改以「mock fetcher 回傳不含 `.programlist-wrap` 的 HTML」觸發。
