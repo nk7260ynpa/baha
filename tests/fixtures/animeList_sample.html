@@ -1,238 +1,446 @@
-<!DOCTYPE html>
-<html lang="zh-Hant-TW">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>動畫瘋 - 新番時刻表（fixture 樣本）</title>
-<meta name="description" content="這是一份離線測試樣本，僅供 baha parser 單元測試使用，不代表實際動畫瘋頁面內容。">
-<link rel="stylesheet" href="/css/animate.css">
-<style>
-  /* 以下大段落的樣式註解僅為了讓 fixture 接近真實頁面大小（>= 20KB），
-     並不影響 parser 測試結果。parser 只透過 DOM 選擇器擷取資料。*/
-  body { font-family: "Microsoft JhengHei", sans-serif; margin: 0; padding: 0; }
-  header.nav { background: #222; color: #eee; padding: 16px 24px; }
-  header.nav .logo { font-size: 24px; font-weight: bold; }
-  header.nav ul { list-style: none; display: flex; gap: 16px; padding: 0; margin: 8px 0 0 0; }
-  header.nav li a { color: #eee; text-decoration: none; }
-  main .schedule-week { padding: 24px; }
-  main .schedule-week h2.week-title { font-size: 20px; margin-bottom: 16px; color: #222; }
-  .animate-theme-list { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
-  .animate-theme-list .theme-list-block { background: #f5f5f5; border-radius: 6px; padding: 12px; }
-  .animate-theme-list .theme-list-block .theme-time { font-size: 14px; color: #666; }
-  .animate-theme-list .theme-list-block .theme-name { font-size: 16px; font-weight: bold; margin-top: 4px; color: #111; }
-  .animate-theme-list .theme-list-block .theme-number { font-size: 14px; color: #888; margin-top: 2px; }
-  .animate-theme-list .theme-list-block .theme-img { width: 100%; height: 120px; background: #ccc; }
-  .banner-ad { background: #fffbe6; border: 1px dashed #e0c040; padding: 12px; margin: 24px; text-align: center; }
-  .login-hint { background: #eef4ff; border: 1px solid #b9d0ff; padding: 12px; margin: 24px; }
-  footer { background: #111; color: #aaa; padding: 24px; text-align: center; font-size: 12px; }
-  /* --- 以下為填充用樣式占位，以確保檔案大小接近真實頁面 --- */
-  .placeholder-a { color: transparent; }
-  .placeholder-b { color: transparent; }
-  .placeholder-c { color: transparent; }
-  .placeholder-d { color: transparent; }
-  .placeholder-e { color: transparent; }
-  .placeholder-f { color: transparent; }
-</style>
-</head>
-<body>
-<header class="nav">
-  <div class="logo">動畫瘋（fixture）</div>
-  <ul>
-    <li><a href="/">首頁</a></li>
-    <li><a href="/animeList.php">新番時刻表</a></li>
-    <li><a href="/search.php">搜尋</a></li>
-    <li><a href="/user/">登入</a></li>
-  </ul>
-</header>
-
-<div class="banner-ad">
-  <!-- 這是干擾區塊：parser 必須略過。-->
-  <span>【廣告】巴哈贈點活動開跑！</span>
+<!-- source: https://ani.gamer.com.tw/ 擷取於 2026-04-22；已清理 script/style/ads/tracking token；day-list=7，a.text-anime-info=59；本檔僅作為離線 DOM 結構樣本，非官方授權內容 -->
+<html><head><meta charset="utf-8"><title>Baha 時刻表樣本</title></head><body>
+<div class="programlist-wrap newanime-content-hide">
+<p class="programlist-hint">※下表為預定播出時間，實際播出時間請依當日更新狀況為主。</p>
+<!-- 列表內文 開始 -->
+<div class="programlist-wrap_block">
+<div class="programlist-block">
+<div class="day-list">
+<h3 class="day-title">週一</h3>
+<a class="text-anime-info" href="animeVideo.php?sn=48459">
+<span class="text-anime-time">01:00</span>
+<div class="text-anime-detail">
+<p class="text-anime-name">茉莉花同學的好感度壞得很徹底</p>
+<p class="text-anime-number">第3集</p>
 </div>
-
-<div class="login-hint">
-  <!-- 這也是干擾區塊：parser 必須略過。-->
-  <span>登入即可收藏追蹤動畫喔！</span>
+</a>
+<a class="text-anime-info" href="animeVideo.php?sn=48462">
+<span class="text-anime-time">12:00</span>
+<div class="text-anime-detail">
+<p class="text-anime-name">MAO 摩緒</p>
+<p class="text-anime-number">第3集</p>
 </div>
-
-<main>
-
-<section class="schedule-week" data-week="1">
-  <h2 class="week-title">週一</h2>
-  <div class="animate-theme-list">
-
-    <a class="theme-list-block" href="/animeVideo.php?sn=1001">
-      <div class="theme-img"></div>
-      <p class="theme-time">21:00</p>
-      <p class="theme-name">  測試動畫・一號  </p>
-      <p class="theme-number">第 01 集</p>
-    </a>
-
-    <a class="theme-list-block" href="/animeVideo.php?sn=1002">
-      <div class="theme-img"></div>
-      <p class="theme-time">22:30</p>
-      <p class="theme-name">測試動畫·二號</p>
-      <p class="theme-number">第 05 集</p>
-    </a>
-
-  </div>
-</section>
-
-<section class="schedule-week" data-week="2">
-  <h2 class="week-title">週二</h2>
-  <div class="animate-theme-list">
-
-    <a class="theme-list-block" href="/animeVideo.php?sn=1003">
-      <div class="theme-img"></div>
-      <p class="theme-time">20:00</p>
-      <p class="theme-name">測試動畫三號</p>
-      <p class="theme-number">第 12 集</p>
-    </a>
-
-    <a class="theme-list-block" href="/animeVideo.php?sn=1004">
-      <div class="theme-img"></div>
-      <p class="theme-time">22:00</p>
-      <p class="theme-name">劍與魔法的測試世界</p>
-      <p class="theme-number">第 03 集</p>
-    </a>
-
-    <!-- 此卡片缺集數，parser 必須略過並記 WARN -->
-    <a class="theme-list-block" href="/animeVideo.php?sn=1099">
-      <div class="theme-img"></div>
-      <p class="theme-time">23:00</p>
-      <p class="theme-name">結構不完整的動畫</p>
-      <!-- 缺 theme-number -->
-    </a>
-
-  </div>
-</section>
-
-<section class="schedule-week" data-week="3">
-  <h2 class="week-title">週三</h2>
-  <div class="animate-theme-list">
-
-    <a class="theme-list-block" href="/animeVideo.php?sn=1005">
-      <div class="theme-img"></div>
-      <p class="theme-time">21:30</p>
-      <p class="theme-name">咒術測試戰</p>
-      <p class="theme-number">第 12 集</p>
-    </a>
-
-    <a class="theme-list-block" href="/animeVideo.php?sn=1006">
-      <div class="theme-img"></div>
-      <p class="theme-time">22:00</p>
-      <p class="theme-name">測試之刃 無限測試篇</p>
-      <p class="theme-number">第 08 集</p>
-    </a>
-
-    <a class="theme-list-block" href="/animeVideo.php?sn=1007">
-      <div class="theme-img"></div>
-      <p class="theme-time">00:30</p>
-      <p class="theme-name">深夜測試少女</p>
-      <p class="theme-number">特別篇</p>
-    </a>
-
-  </div>
-</section>
-
-<section class="schedule-week" data-week="4">
-  <h2 class="week-title">週四</h2>
-  <div class="animate-theme-list">
-
-    <a class="theme-list-block" href="/animeVideo.php?sn=1008">
-      <div class="theme-img"></div>
-      <p class="theme-time">19:00</p>
-      <p class="theme-name">測試英雄學院</p>
-      <p class="theme-number">第 22 集</p>
-    </a>
-
-    <a class="theme-list-block" href="/animeVideo.php?sn=1009">
-      <div class="theme-img"></div>
-      <p class="theme-time">23:30</p>
-      <p class="theme-name">進擊的測試</p>
-      <p class="theme-number">第 07 集</p>
-    </a>
-
-  </div>
-</section>
-
-<section class="schedule-week" data-week="5">
-  <h2 class="week-title">週五</h2>
-  <div class="animate-theme-list">
-
-    <a class="theme-list-block" href="/animeVideo.php?sn=1010">
-      <div class="theme-img"></div>
-      <p class="theme-time">20:30</p>
-      <p class="theme-name">海之測試者</p>
-      <p class="theme-number">第 15 集</p>
-    </a>
-
-    <a class="theme-list-block" href="/animeVideo.php?sn=1011">
-      <div class="theme-img"></div>
-      <p class="theme-time">22:30</p>
-      <p class="theme-name">魔法測試學園</p>
-      <p class="theme-number">第 04 集</p>
-    </a>
-
-  </div>
-</section>
-
-<section class="schedule-week" data-week="6">
-  <h2 class="week-title">週六</h2>
-  <div class="animate-theme-list">
-
-    <a class="theme-list-block" href="/animeVideo.php?sn=1012">
-      <div class="theme-img"></div>
-      <p class="theme-time">18:00</p>
-      <p class="theme-name">週末測試大冒險</p>
-      <p class="theme-number">第 10 集</p>
-    </a>
-
-  </div>
-</section>
-
-<section class="schedule-week" data-week="7">
-  <h2 class="week-title">週日</h2>
-  <div class="animate-theme-list">
-
-    <a class="theme-list-block" href="/animeVideo.php?sn=1013">
-      <div class="theme-img"></div>
-      <p class="theme-time">17:00</p>
-      <p class="theme-name">週日早安測試</p>
-      <p class="theme-number">第 06 集</p>
-    </a>
-
-  </div>
-</section>
-
-</main>
-
-<!-- 另一個干擾區塊：有 theme-list-block class 但位於非時刻表 section，parser 應該略過
-     因為我們限定在 .schedule-week .animate-theme-list 內搜尋。 -->
-<aside class="sidebar">
-  <div class="animate-theme-list">
-    <div class="ad-card theme-list-block">
-      <p class="theme-time">推薦</p>
-      <p class="theme-name">側欄廣告測試</p>
-      <p class="theme-number">廣告</p>
-    </div>
-  </div>
-</aside>
-
-<footer>
-  <p>本頁為 baha parser 測試用 fixture；非實際動畫瘋內容。</p>
-  <!-- 以下長篇大論的說明文字僅用於填充檔案大小，確保 > 20KB 的要求；
-       parser 不會讀取這些文字。此段同樣為繁體中文，避免混淆。 -->
-  <p class="placeholder-a">說明一：此 fixture 僅供 tests/test_parser.py 使用。設計上刻意在時刻表主要區塊之外放置一個側欄卡片，用以檢驗 parser 是否只選取合法的 .schedule-week .animate-theme-list .theme-list-block；若 parser 忽略 scope 會回傳 14 筆，反之應回傳 12 筆合法資料（扣除 1 筆結構不完整的卡片）。此外，卡片的 .theme-name 內嵌不同形式的空白（半形、全形、多重空白）以驗證 strip 行為；.theme-number 則有「第 01 集」「第 05 集」「特別篇」等不同樣式以驗證清洗規則。</p>
-  <p class="placeholder-b">說明二：parser 應將「第 01 集」清洗為字串 "01"，而「特別篇」保留為 "特別篇"。weekday 由 .schedule-week[data-week] 取得，並以 1=週一、2=週二、…、7=週日對應寫回 0..6（parser 內部需減一）。時段欄位 .theme-time 為 HH:MM 字串，直接保留原樣供 time_utils 處理；若時段非 HH:MM 格式，parser 不做轉換而是略過該卡片。</p>
-  <p class="placeholder-c">說明三：以下三段為純粹的佔位文字，用以讓 fixture 接近真實頁面的大小（>= 20KB），便於 parser 測試效能與解析穩定度。真實頁面通常包含大量 inline CSS、分析腳本、meta 標籤等，本 fixture 使用註解與文字段落代替，以避免引入真實的外部腳本連結。</p>
-  <p class="placeholder-d">佔位四：一段長長的敘述文字、一段長長的敘述文字、一段長長的敘述文字、一段長長的敘述文字、一段長長的敘述文字、一段長長的敘述文字、一段長長的敘述文字、一段長長的敘述文字、一段長長的敘述文字、一段長長的敘述文字、一段長長的敘述文字、一段長長的敘述文字、一段長長的敘述文字、一段長長的敘述文字、一段長長的敘述文字、一段長長的敘述文字、一段長長的敘述文字、一段長長的敘述文字、一段長長的敘述文字、一段長長的敘述文字、一段長長的敘述文字、一段長長的敘述文字、一段長長的敘述文字、一段長長的敘述文字、一段長長的敘述文字、一段長長的敘述文字、一段長長的敘述文字、一段長長的敘述文字、一段長長的敘述文字、一段長長的敘述文字、一段長長的敘述文字、一段長長的敘述文字、一段長長的敘述文字、一段長長的敘述文字、一段長長的敘述文字、一段長長的敘述文字、一段長長的敘述文字、一段長長的敘述文字、一段長長的敘述文字、一段長長的敘述文字、一段長長的敘述文字、一段長長的敘述文字、一段長長的敘述文字、一段長長的敘述文字、一段長長的敘述文字、一段長長的敘述文字、一段長長的敘述文字、一段長長的敘述文字、一段長長的敘述文字、一段長長的敘述文字、一段長長的敘述文字、一段長長的敘述文字、一段長長的敘述文字、一段長長的敘述文字、一段長長的敘述文字、一段長長的敘述文字、一段長長的敘述文字。</p>
-  <p class="placeholder-e">佔位五：更多長篇繁體中文填充內容，用以確保檔案達到規格要求的 20 KB 門檻。此段文字僅是為了讓整份 HTML 不至於過小，parser 本身不會因為檔案大小而改變行為；但 tests/test_parser.py 的驗收條件中包含「檔案大小 > 20 KB」，因此這裡提供足夠的內容。再來一段填充：一段長長的敘述文字、一段長長的敘述文字、一段長長的敘述文字、一段長長的敘述文字、一段長長的敘述文字、一段長長的敘述文字、一段長長的敘述文字、一段長長的敘述文字、一段長長的敘述文字、一段長長的敘述文字、一段長長的敘述文字、一段長長的敘述文字、一段長長的敘述文字、一段長長的敘述文字、一段長長的敘述文字、一段長長的敘述文字、一段長長的敘述文字、一段長長的敘述文字、一段長長的敘述文字、一段長長的敘述文字、一段長長的敘述文字、一段長長的敘述文字、一段長長的敘述文字、一段長長的敘述文字、一段長長的敘述文字、一段長長的敘述文字、一段長長的敘述文字、一段長長的敘述文字、一段長長的敘述文字、一段長長的敘述文字、一段長長的敘述文字、一段長長的敘述文字。</p>
-  <p class="placeholder-i">佔位九：再一小段確保超過 20 KB。tasks 5.1 驗收條件：檔案大小 > 20 KB 且 animate-theme-list 字串出現多次。目前已多次出現，僅檔案大小稍微不足，故在此加上一段。補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補。</p>
-  <p class="placeholder-h">佔位八：追加填充段落一。此 fixture 之所以需要這麼多填充文字，是因為 tasks.md 中要求檔案大小 > 20 KB，模擬實際動畫瘋頁面的資料量。parser 於真實情境下會面對大量 HTML，因此以 > 20 KB 的 fixture 進行測試有助於發現效能或解析的邊界問題。以下繼續填充：補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補補。</p>
-  <p class="placeholder-g">佔位七：補足檔案大小需求而新增的純填充文字。fixture 的驗收條件要求檔案大小 > 20 KB 且 `animate-theme-list` 字串出現多次；為了同時滿足兩者，這裡以繁體中文段落重複多次以提升位元組數，同時不會改變 parser 的解析結果。填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充。</p>
-  <p class="placeholder-f">佔位六：再一段純填充。說明：parser 必須在 .schedule-week 範圍內搜尋 .theme-list-block，才能避開側欄與廣告的 theme-list-block 子元素。若 parser 僅搜尋全文件內的 .theme-list-block，測試會多出 1 筆（廣告卡），導致總筆數為 14；而以 data-week 限定搜尋範圍，並配合「結構完整」檢查，才可得到 12 筆合法資料。以下為另一段 padding：填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充填充。</p>
-</footer>
-
-</body>
-</html>
+</a>
+<a class="text-anime-info" href="animeVideo.php?sn=48468">
+<span class="text-anime-time">22:00</span>
+<div class="text-anime-detail">
+<p class="text-anime-name">木頭風紀委員和迷你裙 JK 的故事</p>
+<p class="text-anime-number">第3集</p>
+</div>
+</a>
+<a class="text-anime-info" href="animeVideo.php?sn=48465">
+<span class="text-anime-time">22:00</span>
+<div class="text-anime-detail">
+<p class="text-anime-name">異世界悠閒農家 2</p>
+<p class="text-anime-number">第3集</p>
+</div>
+</a>
+</div>
+<div class="day-list">
+<h3 class="day-title">週二</h3>
+<a class="text-anime-info" href="animeVideo.php?sn=48473">
+<span class="text-anime-time">21:00</span>
+<div class="text-anime-detail">
+<p class="text-anime-name">百鬼夜行抄</p>
+<p class="text-anime-number">第3集</p>
+</div>
+</a>
+<a class="text-anime-info" href="animeVideo.php?sn=48476">
+<span class="text-anime-time">21:30</span>
+<div class="text-anime-detail">
+<p class="text-anime-name">成為悲劇元兇的最強異端，最後頭目女王為了人民犧牲奉獻 第二季</p>
+<p class="text-anime-number">第3集</p>
+</div>
+</a>
+<a class="text-anime-info" href="animeVideo.php?sn=48479">
+<span class="text-anime-time">22:30</span>
+<div class="text-anime-detail">
+<p class="text-anime-name">婚姻劇毒</p>
+<p class="text-anime-number">第3集</p>
+</div>
+</a>
+<a class="text-anime-info" href="animeVideo.php?sn=48555">
+<span class="text-anime-time">22:30</span>
+<div class="text-anime-detail">
+<p class="text-anime-name">想結束這場「我愛你」的遊戲</p>
+<p class="text-anime-number">第2集</p>
+</div>
+</a>
+<a class="text-anime-info" href="animeVideo.php?sn=48482">
+<span class="text-anime-time">22:30</span>
+<div class="text-anime-detail">
+<p class="text-anime-name">複製品的我也會談戀愛</p>
+<p class="text-anime-number">第3集</p>
+</div>
+</a>
+<a class="text-anime-info" href="animeVideo.php?sn=48485">
+<span class="text-anime-time">23:00</span>
+<div class="text-anime-detail">
+<p class="text-anime-name">我和班上第二可愛的女生成為朋友</p>
+<p class="text-anime-number">第3集</p>
+</div>
+</a>
+</div>
+<div class="day-list today-list">
+<h3 class="day-title">週三</h3>
+<a class="text-anime-info" href="animeVideo.php?sn=48490">
+<span class="text-anime-time">00:00</span>
+<div class="text-anime-detail">
+<p class="text-anime-name">左撇子艾倫</p>
+<p class="text-anime-number">第3集</p>
+</div>
+</a>
+<a class="text-anime-info" href="animeVideo.php?sn=48493">
+<span class="text-anime-time">01:35</span>
+<div class="text-anime-detail">
+<p class="text-anime-name">我回來了，他又來打擾了！</p>
+<p class="text-anime-number">第3集</p>
+</div>
+</a>
+<a class="text-anime-info" href="animeVideo.php?sn=48496">
+<span class="text-anime-time">02:05</span>
+<div class="text-anime-detail">
+<p class="text-anime-name">女神「異世界轉生想成為什麼」我「勇者的肋骨」</p>
+<p class="text-anime-number">第3集</p>
+</div>
+</a>
+<a class="text-anime-info" href="animeVideo.php?sn=48487">
+<span class="text-anime-time">08:00</span>
+<div class="text-anime-detail">
+<p class="text-anime-name">假面騎士 ZEZTZ</p>
+<p class="text-anime-number">第27集</p>
+</div>
+</a>
+<a class="text-anime-info" href="animeVideo.php?sn=48709">
+<span class="text-anime-time">19:00</span>
+<div class="text-anime-detail">
+<p class="text-anime-name">從前從前有隻貓！世界喵童話</p>
+<p class="text-anime-number">第28集</p>
+</div>
+</a>
+<a class="text-anime-info" href="animeVideo.php?sn=48613">
+<span class="text-anime-time">20:30</span>
+<div class="text-anime-detail">
+<p class="text-anime-name">歡迎來到實力至上主義的教室 第四季 2年級篇 第一學期</p>
+<p class="text-anime-number">第7集</p>
+</div>
+</a>
+<a class="text-anime-info" href="animeVideo.php?sn=48538">
+<span class="text-anime-time">21:00</span>
+<div class="text-anime-detail">
+<p class="text-anime-name">出租女友 第五季</p>
+<p class="text-anime-number">第3集</p>
+</div>
+</a>
+<a class="text-anime-info" href="animeVideo.php?sn=48499">
+<span class="text-anime-time">22:00</span>
+<div class="text-anime-detail">
+<p class="text-anime-name">異獸魔都 第二季</p>
+<p class="text-anime-number">第17集</p>
+</div>
+</a>
+<a class="text-anime-info" href="animeVideo.php?sn=48503">
+<span class="text-anime-time">22:00</span>
+<div class="text-anime-detail">
+<p class="text-anime-name">Re：從零開始的異世界生活 第四季</p>
+<p class="text-anime-number">第2集</p>
+</div>
+</a>
+<a class="text-anime-info" href="animeVideo.php?sn=48357">
+<span class="text-anime-time">23:30</span>
+<div class="text-anime-detail">
+<p class="text-anime-name">溜掉的大魚比不上自己釣到的魚</p>
+<p class="text-anime-number">第3集</p>
+</div>
+</a>
+</div>
+<div class="day-list">
+<h3 class="day-title">週四</h3>
+<a class="text-anime-info" href="animeVideo.php?sn=48557">
+<span class="text-anime-time">00:00</span>
+<div class="text-anime-detail">
+<p class="text-anime-name">CANDY CARIES 蛀在糖糖裡</p>
+<p class="text-anime-number">第1集</p>
+</div>
+</a>
+<a class="text-anime-info" href="animeVideo.php?sn=48364">
+<span class="text-anime-time">00:45</span>
+<div class="text-anime-detail">
+<p class="text-anime-name">終末起點 第 2 季</p>
+<p class="text-anime-number">第3集</p>
+</div>
+</a>
+<a class="text-anime-info" href="animeVideo.php?sn=48497">
+<span class="text-anime-time">01:00</span>
+<div class="text-anime-detail">
+<p class="text-anime-name">加油！中村同學！！</p>
+<p class="text-anime-number">第4集</p>
+</div>
+</a>
+<a class="text-anime-info" href="animeVideo.php?sn=48335">
+<span class="text-anime-time">19:00</span>
+<div class="text-anime-detail">
+<p class="text-anime-name">無尾熊繪日記</p>
+<p class="text-anime-number">第29集</p>
+</div>
+</a>
+<a class="text-anime-info" href="animeVideo.php?sn=48602">
+<span class="text-anime-time">20:30</span>
+<div class="text-anime-detail">
+<p class="text-anime-name">女騎士成為蠻族新娘</p>
+<p class="text-anime-number">第2集</p>
+</div>
+</a>
+<a class="text-anime-info" href="animeVideo.php?sn=48394">
+<span class="text-anime-time">22:00</span>
+<div class="text-anime-detail">
+<p class="text-anime-name">Dr.STONE 新石紀 第四季</p>
+<p class="text-anime-number">第27集</p>
+</div>
+</a>
+<a class="text-anime-info" href="animeVideo.php?sn=48599">
+<span class="text-anime-time">22:00</span>
+<div class="text-anime-detail">
+<p class="text-anime-name">庫吉馬唱歌的家</p>
+<p class="text-anime-number">第2集</p>
+</div>
+</a>
+</div>
+<div class="day-list">
+<h3 class="day-title">週五</h3>
+<a class="text-anime-info" href="animeVideo.php?sn=48397">
+<span class="text-anime-time">00:00</span>
+<div class="text-anime-detail">
+<p class="text-anime-name">霧尾粉絲後援會</p>
+<p class="text-anime-number">第3集</p>
+</div>
+</a>
+<a class="text-anime-info" href="animeVideo.php?sn=48400">
+<span class="text-anime-time">00:30</span>
+<div class="text-anime-detail">
+<p class="text-anime-name">輪迴的花瓣</p>
+<p class="text-anime-number">第3集</p>
+</div>
+</a>
+<a class="text-anime-info" href="animeVideo.php?sn=48596">
+<span class="text-anime-time">00:45</span>
+<div class="text-anime-detail">
+<p class="text-anime-name">淡島百景</p>
+<p class="text-anime-number">第2集</p>
+</div>
+</a>
+<a class="text-anime-info" href="animeVideo.php?sn=48406">
+<span class="text-anime-time">01:15</span>
+<div class="text-anime-detail">
+<p class="text-anime-name">吞噬魔物的冒險者</p>
+<p class="text-anime-number">第3集</p>
+</div>
+</a>
+<a class="text-anime-info" href="animeVideo.php?sn=48403">
+<span class="text-anime-time">01:30</span>
+<div class="text-anime-detail">
+<p class="text-anime-name">你又被殺了呢，偵探大人</p>
+<p class="text-anime-number">第3集</p>
+</div>
+</a>
+<a class="text-anime-info" href="animeVideo.php?sn=48470">
+<span class="text-anime-time">18:00</span>
+<div class="text-anime-detail">
+<p class="text-anime-name">卡片戰鬥!! 先導者 Divinez 第五季「幻真星戰篇」</p>
+<p class="text-anime-number">第12集</p>
+</div>
+</a>
+<a class="text-anime-info" href="animeVideo.php?sn=48382">
+<span class="text-anime-time">22:30</span>
+<div class="text-anime-detail">
+<p class="text-anime-name">關於我在無意間被隔壁的天使變成廢柴這件事 2</p>
+<p class="text-anime-number">第3集</p>
+</div>
+</a>
+<a class="text-anime-info" href="animeVideo.php?sn=48385">
+<span class="text-anime-time">23:00</span>
+<div class="text-anime-detail">
+<p class="text-anime-name">關於我轉生變成史萊姆這檔事 第四季</p>
+<p class="text-anime-number">第75集</p>
+</div>
+</a>
+<a class="text-anime-info" href="animeVideo.php?sn=48590">
+<span class="text-anime-time">23:30</span>
+<div class="text-anime-detail">
+<p class="text-anime-name">神之雫</p>
+<p class="text-anime-number">第2集</p>
+</div>
+</a>
+<a class="text-anime-info" href="animeVideo.php?sn=48593">
+<span class="text-anime-time">23:30</span>
+<div class="text-anime-detail">
+<p class="text-anime-name">上伊那牡丹，醉姿如百合</p>
+<p class="text-anime-number">第2集</p>
+</div>
+</a>
+<a class="text-anime-info" href="animeVideo.php?sn=48388">
+<span class="text-anime-time">23:30</span>
+<div class="text-anime-detail">
+<p class="text-anime-name">凍結地球</p>
+<p class="text-anime-number">第3集</p>
+</div>
+</a>
+</div>
+<div class="day-list">
+<h3 class="day-title">週六</h3>
+<a class="text-anime-info" href="animeVideo.php?sn=48434">
+<span class="text-anime-time">09:00</span>
+<div class="text-anime-detail">
+<p class="text-anime-name">拉拉熊</p>
+<p class="text-anime-number">第3集</p>
+</div>
+</a>
+<a class="text-anime-info" href="animeVideo.php?sn=48658">
+<span class="text-anime-time">17:30</span>
+<div class="text-anime-detail">
+<p class="text-anime-name">小書痴的下剋上  為了成為圖書管理員不擇手段！領主的養女</p>
+<p class="text-anime-number">第3集</p>
+</div>
+</a>
+<a class="text-anime-info" href="animeVideo.php?sn=48409">
+<span class="text-anime-time">18:55</span>
+<div class="text-anime-detail">
+<p class="text-anime-name">入間同學入魔了！第四季</p>
+<p class="text-anime-number">第3集</p>
+</div>
+</a>
+<a class="text-anime-info" href="animeVideo.php?sn=48412">
+<span class="text-anime-time">20:55</span>
+<div class="text-anime-detail">
+<p class="text-anime-name">大賢者里德爾的時間逆行</p>
+<p class="text-anime-number">第3集</p>
+</div>
+</a>
+<a class="text-anime-info" href="animeVideo.php?sn=48626">
+<span class="text-anime-time">21:00</span>
+<div class="text-anime-detail">
+<p class="text-anime-name">弱弱老師</p>
+<p class="text-anime-number">第2集</p>
+</div>
+</a>
+<a class="text-anime-info" href="animeVideo.php?sn=48623">
+<span class="text-anime-time">22:30</span>
+<div class="text-anime-detail">
+<p class="text-anime-name">殺手青春</p>
+<p class="text-anime-number">第2集</p>
+</div>
+</a>
+</div>
+<div class="day-list">
+<h3 class="day-title">週日</h3>
+<a class="text-anime-info" href="animeVideo.php?sn=48415">
+<span class="text-anime-time">00:00</span>
+<div class="text-anime-detail">
+<p class="text-anime-name">朱音落語</p>
+<p class="text-anime-number">第3集</p>
+</div>
+</a>
+<a class="text-anime-info" href="animeVideo.php?sn=48423">
+<span class="text-anime-time">00:00</span>
+<div class="text-anime-detail">
+<p class="text-anime-name">容易對付的惡魔大人</p>
+<p class="text-anime-number">第3集</p>
+</div>
+</a>
+<a class="text-anime-info" href="animeVideo.php?sn=48428">
+<span class="text-anime-time">00:00</span>
+<div class="text-anime-detail">
+<p class="text-anime-name">黃泉使者</p>
+<p class="text-anime-number">第3集</p>
+</div>
+</a>
+<a class="text-anime-info" href="animeVideo.php?sn=48366">
+<span class="text-anime-time">00:30</span>
+<div class="text-anime-detail">
+<p class="text-anime-name">勇者之渣</p>
+<p class="text-anime-number">第14集</p>
+</div>
+</a>
+<a class="text-anime-info" href="animeVideo.php?sn=48419">
+<span class="text-anime-time">00:30</span>
+<div class="text-anime-detail">
+<p class="text-anime-name">楠木邸的神明庭院</p>
+<p class="text-anime-number">第3集</p>
+</div>
+</a>
+<a class="text-anime-info" href="animeVideo.php?sn=48577">
+<span class="text-anime-time">00:30</span>
+<div class="text-anime-detail">
+<p class="text-anime-name">春夏秋冬代行者 春之舞</p>
+<p class="text-anime-number">第4集</p>
+</div>
+</a>
+<a class="text-anime-info" href="animeVideo.php?sn=48574">
+<span class="text-anime-time">01:00</span>
+<div class="text-anime-detail">
+<p class="text-anime-name">一疊間漫畫咖啡廳日常</p>
+<p class="text-anime-number">第2集</p>
+</div>
+</a>
+<a class="text-anime-info" href="animeVideo.php?sn=48438">
+<span class="text-anime-time">01:00</span>
+<div class="text-anime-detail">
+<p class="text-anime-name">主播女孩重度依賴</p>
+<p class="text-anime-number">第3集</p>
+</div>
+</a>
+<a class="text-anime-info" href="animeVideo.php?sn=48441">
+<span class="text-anime-time">16:30</span>
+<div class="text-anime-detail">
+<p class="text-anime-name">杖與劍的魔劍譚 Season 2</p>
+<p class="text-anime-number">第14集</p>
+</div>
+</a>
+<a class="text-anime-info" href="animeVideo.php?sn=48567">
+<span class="text-anime-time">16:30</span>
+<div class="text-anime-detail">
+<p class="text-anime-name">夜櫻家大作戰 第二季</p>
+<p class="text-anime-number">第29集</p>
+</div>
+</a>
+<a class="text-anime-info" href="animeVideo.php?sn=48444">
+<span class="text-anime-time">17:00</span>
+<div class="text-anime-detail">
+<p class="text-anime-name">鑽石王牌 act2 第二季</p>
+<p class="text-anime-number">第3集</p>
+</div>
+</a>
+<a class="text-anime-info" href="animeVideo.php?sn=48447">
+<span class="text-anime-time">22:00</span>
+<div class="text-anime-detail">
+<p class="text-anime-name">魔法姊妹露露特莉莉</p>
+<p class="text-anime-number">第3集</p>
+</div>
+</a>
+<a class="text-anime-info" href="animeVideo.php?sn=48732">
+<span class="text-anime-time">22:00</span>
+<div class="text-anime-detail">
+<p class="text-anime-name">女僕小姐的貪吃日常</p>
+<p class="text-anime-number">第4集</p>
+</div>
+</a>
+<a class="text-anime-info" href="animeVideo.php?sn=48564">
+<span class="text-anime-time">23:00</span>
+<div class="text-anime-detail">
+<p class="text-anime-name">黑貓與魔女的教室</p>
+<p class="text-anime-number">第2集</p>
+</div>
+</a>
+<a class="text-anime-info" href="animeVideo.php?sn=48453">
+<span class="text-anime-time">23:30</span>
+<div class="text-anime-detail">
+<p class="text-anime-name">GHOST CONCERT : 失落之歌</p>
+<p class="text-anime-number">第3集</p>
+</div>
+</a>
+</div>
+</div>
+</div>
+<!-- 列表內文 結束 -->
+</div>
+</body></html>

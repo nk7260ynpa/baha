@@ -58,7 +58,7 @@
 > 背景：冒煙測試確認原 `/animeList.php` 實為 A–Z 全動畫清單頁，真正的週期表位於首頁 `/` 之 `.programlist-wrap`。
 > Specialist 須依 design.md 的 D1 / D8 與 spec.md 的新 Requirement 2 全面重做下列工作。原 5.1 / 5.2 / 5.3 / 6.1（`DEFAULT_URL` 部分）/ 8.2 已回退為未完成，Specialist 應視 Section 10 為其取代版，逐項完成後再回頭勾選。
 
-- [ ] 10.1 以宿主偵察樣本 `/tmp/ani_root.html`（360 KB，Specialist 可於宿主讀取）為來源，擷取 `.programlist-wrap` 整段 HTML 作為新 fixture，清理下列內容後保存為 `tests/fixtures/animeList_sample.html`：
+- [x] 10.1 以宿主偵察樣本 `/tmp/ani_root.html`（360 KB，Specialist 可於宿主讀取）為來源，擷取 `.programlist-wrap` 整段 HTML 作為新 fixture，清理下列內容後保存為 `tests/fixtures/animeList_sample.html`：
   - 移除 `<script>`、`<style>`、廣告 `<iframe>` 與追蹤相關 `<img>`（Google Analytics / FB Pixel 等）。
   - 清除任何 session token、cookie 值、CSRF token、會員 id、使用者暱稱、追蹤參數（例：URL query 中的 `uid`、`token`、`sid`、`_ga`、`fbclid` 等），必要時將 `<a href>` 改為 `animeVideo.php?sn=<僅保留 sn 數字>`。
   - 確認保留 7 個 `.day-list`（週一至週日）、總計 >= 10 張 `a.text-anime-info`；若樣本當日資料不足 10 張，可保留全部可見卡片並於檔頭註記實際筆數。
