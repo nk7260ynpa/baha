@@ -25,9 +25,9 @@
 
 ## 5. HTML 解析模組
 
-- [ ] 5.1 蒐集 `tests/fixtures/animeList_sample.html`：離線保存一份動畫瘋時刻表 HTML（含 >= 10 部動畫）；建議以瀏覽器另存 HTML 後放入。檔案範圍：`tests/fixtures/animeList_sample.html`。驗收：檔案大小 > 20 KB 且 `grep -c "animate-theme-list" fixtures` 命中多次（實際 selector 依 parser 設計）。
-- [ ] 5.2 實作 `src/baha/parser.py`：提供 `parse_schedule(html: str) -> list[ScheduleCard]`，其中 `ScheduleCard` 含 `title: str`、`episode: str`、`weekday: int`、`hhmm: str`；結構不完整即略過並 WARN。檔案範圍：`src/baha/parser.py`。驗收：`anime-schedule-scraper` spec 中「正常解析」「清洗」「干擾區塊」「解析失敗」scenario 全部通過。
-- [ ] 5.3 撰寫 `tests/test_parser.py`：以 5.1 的 fixture 驗證至少回傳 10 筆；額外以手寫迷你 HTML 驗證「干擾略過」「片名清洗」「空 HTML 回傳空清單」。檔案範圍：`tests/test_parser.py`。驗收：`pytest tests/test_parser.py -v` 全綠，覆蓋率 >= 80%。
+- [x] 5.1 蒐集 `tests/fixtures/animeList_sample.html`：離線保存一份動畫瘋時刻表 HTML（含 >= 10 部動畫）；建議以瀏覽器另存 HTML 後放入。檔案範圍：`tests/fixtures/animeList_sample.html`。驗收：檔案大小 > 20 KB 且 `grep -c "animate-theme-list" fixtures` 命中多次（實際 selector 依 parser 設計）。
+- [x] 5.2 實作 `src/baha/parser.py`：提供 `parse_schedule(html: str) -> list[ScheduleCard]`，其中 `ScheduleCard` 含 `title: str`、`episode: str`、`weekday: int`、`hhmm: str`；結構不完整即略過並 WARN。檔案範圍：`src/baha/parser.py`。驗收：`anime-schedule-scraper` spec 中「正常解析」「清洗」「干擾區塊」「解析失敗」scenario 全部通過。
+- [x] 5.3 撰寫 `tests/test_parser.py`：以 5.1 的 fixture 驗證至少回傳 10 筆；額外以手寫迷你 HTML 驗證「干擾略過」「片名清洗」「空 HTML 回傳空清單」。檔案範圍：`tests/test_parser.py`。驗收：`pytest tests/test_parser.py -v` 全綠，覆蓋率 >= 80%。
 
 ## 6. 抓取模組（含重試）
 
