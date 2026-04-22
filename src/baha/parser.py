@@ -59,6 +59,9 @@ class ScheduleCard:
 
 
 _HHMM_PATTERN = re.compile(r"^\d{2}:\d{2}$")
+# 同步驗證 HH 範圍 0..23、MM 範圍 0..59，避免 "25:00" 之類雖然符合長度
+# 但語義不合法的值混入。
+_HHMM_VALID_PATTERN = re.compile(r"^(?:[01]\d|2[0-3]):[0-5]\d$")
 # 「第 01 集」「第01集」「第 1 集」皆抽取中間的核心字串（可能含空白）。
 _EPISODE_NUMBER_PATTERN = re.compile(r"^第\s*(\S+)\s*集$")
 
@@ -115,7 +118,7 @@ def _parse_card(weekday: int, card: Tag) -> Optional[ScheduleCard]:
         return None
 
     hhmm = time_raw.strip()
-    if not _HHMM_PATTERN.match(hhmm):
+    if not _HHMM_PATTERN.match(hhmm) or not _HHMM_VALID_PATTERN.match(hhmm):
         logger.warning(
             "卡片時段不合法，已略過；hhmm=%r name=%r",
             hhmm, name_raw.strip(),

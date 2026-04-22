@@ -90,7 +90,7 @@
   - 常數值為 `https://ani.gamer.com.tw/`（結尾含斜線）。
   - `tests/test_fetcher.py` 既有 scenario（正常抓取、非 2xx 重試、網路錯誤重試、User-Agent）維持全綠；若測試寫死舊 URL，必須同步更新測試之期待值（檔案範圍加入 `tests/test_fetcher.py`）。
 
-- [ ] 10.4 重寫 `tests/test_parser.py`，期望值完全依 10.1 新 fixture 與 10.2 新 parser 重算：
+- [x] 10.4 重寫 `tests/test_parser.py`，期望值完全依 10.1 新 fixture 與 10.2 新 parser 重算：
   - 以新 fixture 驗證：總筆數 >= 10；每個 weekday 值（0–6）至少出現一次；所有 `hhmm` 符合 `^\d{2}:\d{2}$`；所有 `title`、`episode` 為非空字串。
   - 以手寫迷你 HTML 驗證：
     - 不合法 `day-title`（例：「本週特別企劃」）整段 `.day-list` 被略過並有 WARN。
