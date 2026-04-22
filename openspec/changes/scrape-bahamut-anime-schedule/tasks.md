@@ -49,8 +49,8 @@
 
 ## 9. 文件與收尾
 
-- [ ] 9.1 更新 `README.md`：加入「環境需求」「如何啟動（`./run.sh`）」「資料表 schema」「環境變數清單」「測試方法（`docker compose run --rm app pytest`）」「已知限制（不跨週推算、不處理付費章節）」段落。檔案範圍：`README.md`。驗收：文件內容涵蓋以上六段且為繁體中文。
-- [ ] 9.2 執行完整測試：於 container 內 `pytest -m "not integration" --cov=baha --cov-report=term-missing`，確保 parser、time_utils 覆蓋率 >= 80%。檔案範圍：無（僅執行）。驗收：log 顯示覆蓋率達標。
+- [x] 9.1 更新 `README.md`：加入「環境需求」「如何啟動（`./run.sh`）」「資料表 schema」「環境變數清單」「測試方法（`docker compose run --rm app pytest`）」「已知限制（不跨週推算、不處理付費章節）」段落。檔案範圍：`README.md`。驗收：文件內容涵蓋以上六段且為繁體中文。
+- [x] 9.2 執行完整測試：於 container 內 `pytest -m "not integration" --cov=baha --cov-report=term-missing`，確保 parser、time_utils 覆蓋率 >= 80%。檔案範圍：無（僅執行）。驗收：log 顯示覆蓋率達標。
 - [ ] 9.3 手動冒煙：執行 `./run.sh`，確認 MariaDB 中 `SELECT COUNT(*) FROM anime_schedule` >= 2，且 `logs/baha-YYYYMMDD.log` 存在。檔案範圍：無。驗收：以上兩條件成立。
 
 > 備註：本變更不得修改 `openspec/` 以外的現有檔案以外的範圍；若實作中發現需修改 `CLAUDE.md` 或本 tasks.md 未列之檔案，須依全域規範寫入 `openspec/changes/scrape-bahamut-anime-schedule/issues.md`，由 Coordinator 更新 tasks 後再繼續。
