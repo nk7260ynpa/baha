@@ -25,13 +25,13 @@
 
 ## 5. HTML 解析模組
 
-- [ ] 5.1 蒐集 `tests/fixtures/animeList_sample.html`：離線保存一份動畫瘋時刻表 HTML（含 >= 10 部動畫）；建議以瀏覽器另存 HTML 後放入。檔案範圍：`tests/fixtures/animeList_sample.html`。驗收：檔案大小 > 20 KB 且 `grep -c "animate-theme-list" fixtures` 命中多次（實際 selector 依 parser 設計）。**[2026-04-22 需依新 DOM 重做 — 由 Section 10.1 取代本項；原合成 fixture 與真實頁面結構不符]**
-- [ ] 5.2 實作 `src/baha/parser.py`：提供 `parse_schedule(html: str) -> list[ScheduleCard]`，其中 `ScheduleCard` 含 `title: str`、`episode: str`、`weekday: int`、`hhmm: str`；結構不完整即略過並 WARN。檔案範圍：`src/baha/parser.py`。驗收：`anime-schedule-scraper` spec 中「正常解析」「清洗」「干擾區塊」「解析失敗」scenario 全部通過。**[2026-04-22 需依新 DOM 重做 — 由 Section 10.2 取代本項；原假設之 `.schedule-week` / `.animate-theme-list` / `.theme-list-block` 階層與真實首頁結構不符]**
-- [ ] 5.3 撰寫 `tests/test_parser.py`：以 5.1 的 fixture 驗證至少回傳 10 筆；額外以手寫迷你 HTML 驗證「干擾略過」「片名清洗」「空 HTML 回傳空清單」。檔案範圍：`tests/test_parser.py`。驗收：`pytest tests/test_parser.py -v` 全綠，覆蓋率 >= 80%。**[2026-04-22 需依新 DOM 重做 — 由 Section 10.4 取代本項；期望值需依新 fixture 與新 parser 重算]**
+- [x] 5.1 蒐集 `tests/fixtures/animeList_sample.html`：離線保存一份動畫瘋時刻表 HTML（含 >= 10 部動畫）；建議以瀏覽器另存 HTML 後放入。檔案範圍：`tests/fixtures/animeList_sample.html`。驗收：檔案大小 > 20 KB 且 `grep -c "animate-theme-list" fixtures` 命中多次（實際 selector 依 parser 設計）。（實際實作：由 Section 10.1 依首頁真實 DOM 取代，改以 `.programlist-wrap .day-list` 結構為準。）
+- [x] 5.2 實作 `src/baha/parser.py`：提供 `parse_schedule(html: str) -> list[ScheduleCard]`，其中 `ScheduleCard` 含 `title: str`、`episode: str`、`weekday: int`、`hhmm: str`；結構不完整即略過並 WARN。檔案範圍：`src/baha/parser.py`。驗收：`anime-schedule-scraper` spec 中「正常解析」「清洗」「干擾區塊」「解析失敗」scenario 全部通過。（實際實作：由 Section 10.2 依真實首頁 DOM 重寫為 `.programlist-wrap` 入口。）
+- [x] 5.3 撰寫 `tests/test_parser.py`：以 5.1 的 fixture 驗證至少回傳 10 筆；額外以手寫迷你 HTML 驗證「干擾略過」「片名清洗」「空 HTML 回傳空清單」。檔案範圍：`tests/test_parser.py`。驗收：`pytest tests/test_parser.py -v` 全綠，覆蓋率 >= 80%。（實際實作：由 Section 10.4 依新 fixture 與新 parser 重寫期望值。）
 
 ## 6. 抓取模組（含重試）
 
-- [ ] 6.1 實作 `src/baha/fetcher.py`：`fetch_schedule_html(url: str, session: Optional[Session]=None) -> str`；User-Agent 含 `baha-schedule-scraper`；失敗時指數退避重試（2/4/8 秒，最多 4 次），最終失敗拋 `FetchError`。檔案範圍：`src/baha/fetcher.py`。驗收：`anime-schedule-scraper` spec 「正常抓取」「非 2xx 重試」「網路錯誤重試」「User-Agent」四個 scenario 成立（以 mock `requests.Session` 於單元測試驗證）。**[2026-04-22 需依新 DOM 重做 — 由 Section 10.3 取代 `DEFAULT_URL` 設定；重試/UA 邏輯本身可保留]**
+- [x] 6.1 實作 `src/baha/fetcher.py`：`fetch_schedule_html(url: str, session: Optional[Session]=None) -> str`；User-Agent 含 `baha-schedule-scraper`；失敗時指數退避重試（2/4/8 秒，最多 4 次），最終失敗拋 `FetchError`。檔案範圍：`src/baha/fetcher.py`。驗收：`anime-schedule-scraper` spec 「正常抓取」「非 2xx 重試」「網路錯誤重試」「User-Agent」四個 scenario 成立（以 mock `requests.Session` 於單元測試驗證）。（實際實作：`DEFAULT_URL` 已於 Section 10.3 改為 `https://ani.gamer.com.tw/`。）
 - [x] 6.2 撰寫 `tests/test_fetcher.py`：以 `unittest.mock` 模擬 `requests.Session`，驗證重試次數、退避時間（以 patch `time.sleep` 記錄呼叫）、User-Agent header。檔案範圍：`tests/test_fetcher.py`。驗收：`pytest tests/test_fetcher.py -v` 全綠。
 
 ## 7. Storage 模組（含 upsert）
@@ -45,7 +45,7 @@
 ## 8. Pipeline 組裝與入口
 
 - [x] 8.1 實作 `src/baha/pipeline.py`：`run_once(fetched_at: datetime)` 呼叫 fetcher → parser → time_utils → 組出 `AnimeScheduleRecord` 清單。`main()` 讀 config、設 log、呼叫 `run_once(datetime.now(ZoneInfo("Asia/Taipei")).replace(tzinfo=None))` 並交給 `Storage.upsert_records`，最後以 INFO log 輸出 `UpsertStats`。檔案範圍：`src/baha/pipeline.py`。驗收：`anime-schedule-scraper` spec 中 pipeline 兩個 scenario 成立。
-- [ ] 8.2 撰寫 `tests/test_pipeline.py`：以 mock fetcher + 使用 fixture HTML + mock storage，驗證「部分解析錯誤不中斷」「紀錄筆數 < 2 時拋 `ScrapeEmptyError`」。檔案範圍：`tests/test_pipeline.py`。驗收：`pytest tests/test_pipeline.py -v` 全綠。**[2026-04-22 需依新 DOM 重做 — 由 Section 10.5 驗證；使用新 fixture 後期望筆數／分佈需重算，必要時微調 pipeline 測試 seam]**
+- [x] 8.2 撰寫 `tests/test_pipeline.py`：以 mock fetcher + 使用 fixture HTML + mock storage，驗證「部分解析錯誤不中斷」「紀錄筆數 < 2 時拋 `ScrapeEmptyError`」。檔案範圍：`tests/test_pipeline.py`。驗收：`pytest tests/test_pipeline.py -v` 全綠。（實際實作：由 Section 10.5 以新 fixture 與缺欄位卡片注入等方式重寫期望值。）
 
 ## 9. 文件與收尾
 
@@ -110,6 +110,6 @@
 
   檔案範圍：`tests/test_pipeline.py`、必要時 `src/baha/pipeline.py`。驗收：`docker compose run --rm app pytest tests/test_pipeline.py -v` 全綠，且整體 `pytest -m "not integration"` 繼續全綠。
 
-- [ ] 10.6 完成 10.1–10.5 後，回到 Section 5 / 6.1 / 8.2 將對應 checkbox 重新勾選並刪除「[2026-04-22 需依新 DOM 重做 …]」註記，同時重新執行 Section 9.2 完整測試覆蓋率檢查。檔案範圍：本 `tasks.md`、無程式碼變動。驗收：tasks.md 中不再有「需依新 DOM 重做」文字；`pytest --cov=baha` 覆蓋率報告符合 9.2 要求。
+- [x] 10.6 完成 10.1–10.5 後，回到 Section 5 / 6.1 / 8.2 將對應 checkbox 重新勾選並刪除原本的「重做」註記（見上方各項已改為實作備註），同時重新執行 Section 9.2 完整測試覆蓋率檢查。檔案範圍：本 `tasks.md`、無程式碼變動。驗收：tasks.md 中不再有 Section 5/6.1/8.2 的 TODO 標記；`pytest --cov=baha` 覆蓋率報告符合 9.2 要求。
 
 > 備註：本變更不得修改 `openspec/` 以外的現有檔案以外的範圍；若實作中發現需修改 `CLAUDE.md` 或本 tasks.md 未列之檔案，須依全域規範寫入 `openspec/changes/scrape-bahamut-anime-schedule/issues.md`，由 Coordinator 更新 tasks 後再繼續。
