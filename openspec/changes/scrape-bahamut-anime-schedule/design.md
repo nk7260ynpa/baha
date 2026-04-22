@@ -2,7 +2,9 @@
 
 本變更為 baha 專案的第一個功能 change。目標是建立一個自動化的動畫上片時間抓取與儲存系統：
 
-- **資料來源**：巴哈姆特動畫瘋 <https://ani.gamer.com.tw/>，主要參考新番時刻表（通常位於 `/animeList.php` 或首頁時刻表區塊）。時刻表每週更新，每集播出時間亦以「週幾 + HH:MM」顯示，而不是絕對日期時間。
+- **資料來源**：巴哈姆特動畫瘋首頁 <https://ani.gamer.com.tw/> 之 `.programlist-wrap` 週期表區塊（靜態 HTML，伺服器端渲染，無需 JS）。時刻表每週更新，每集播出時間以「週幾 + HH:MM」顯示，而不是絕對日期時間。
+
+  > 歷史註記：本 change 初版誤用 `/animeList.php`，經 2026-04-22 真實偵察後修正（見 D1 Decision Record 與 `issues.md` 對應條目）。`/animeList.php` 實為 A–Z 所有動畫清單頁，不含週期／時刻資訊。
 - **現況**：專案目錄僅含 `README.md`、`.gitignore`、`openspec/` 與 `.claude/`，尚無任何原始碼、測試、Docker 檔案。
 - **執行環境約束**：全域偏好要求 Python 程式與測試皆於 Docker container 內執行，且需包含 `docker/`、`logs/`、`run.sh`。
 - **利害關係人**：本專案使用者（資料消費者）、Specialist（實作者）、Verifier（驗證者）。
@@ -27,21 +29,45 @@
 
 ## Decisions
 
-### D1：資料來源頁面選擇 — 新番時刻表 HTML 解析
+### D1：資料來源頁面選擇 — 首頁 `/` 的 `.programlist-wrap` 週期表
 
-**選擇**：抓取 <https://ani.gamer.com.tw/animeList.php>（或首頁時刻表區塊）的 HTML，以 BeautifulSoup 解析 DOM。
+**選擇**：抓取 <https://ani.gamer.com.tw/> 首頁 HTML，定位 `.programlist-wrap` 區塊做為週期表資料源，以 BeautifulSoup 解析 DOM。
 
 **理由**：
 
-- 新番時刻表列出「當週」所有動畫的週幾、時間、片名、集數，一次抓取即可取得多部動畫。
+- 首頁週期表列出「當週」所有動畫的週幾、時間、片名、集數，一次抓取即可取得多部動畫。
 - 不需要登入、不需 JS 渲染（時刻表為 server-side render）。
-- HTML 結構公開、穩定度高於爬詳細頁。
+- HTML 結構由官方介面直出，具備穩定度且對外公開。
 
 **否決的替代方案**：
 
+- **`/animeList.php`（原選擇，已否決）**：2026-04-22 偵察確認該 URL 為「所有動畫 A–Z 清單頁」，完全不含週幾、時間、集數等時刻表資訊；原選擇導致 parser 回傳空清單、pipeline 拋 `ScrapeEmptyError`。保留為 Rejected 供後人避雷。
 - 對每部動畫的詳細頁 `/animeVideo.php?sn=<id>` 逐一爬取：需先取得 sn 清單，且每部動畫需多次請求，對伺服器負擔與抓取成本較高。
 - 抓取逆向分析後的 JSON API：未公開，違反條款風險高，且格式變動難以追蹤。
 - 使用 headless browser (Playwright)：時刻表不需 JS，導入瀏覽器徒增 container 體積與不穩定性。
+
+**解析路徑（DOM 階層）**：經 2026-04-22 真實 HTML 偵察（樣本：宿主 `/tmp/ani_root.html`）確認如下：
+
+```
+.programlist-wrap
+  .programlist-wrap_block
+    .programlist-block
+      .day-list                        ← 以「日」為單位，共 7 個
+        h3.day-title                   ← 文字「週一」…「週日」
+        a.text-anime-info              ← 每張卡片一個 <a>（連到 animeVideo.php?sn=...）
+          span.text-anime-time         ← "HH:MM"
+          .text-anime-detail
+            p.text-anime-name          ← 片名
+            p.text-anime-number        ← "第 N 集" 或 "特別篇" 等
+```
+
+**欄位映射規則**：
+
+- `weekday`：由 `.day-list > h3.day-title` 文字映射，對照表 `{"週一":0, "週二":1, "週三":2, "週四":3, "週五":4, "週六":5, "週日":6}`；未命中者整個 `.day-list` 略過並記 WARN。
+- `card`：同一個 `.day-list` 內的所有 `a.text-anime-info`，每張卡片輸出一筆 `ScheduleCard`。
+- `hhmm`：`span.text-anime-time` 取 `get_text(strip=True)`；若非 `^\d{2}:\d{2}$` 格式則該卡片略過並記 WARN。
+- `title`：`p.text-anime-name.get_text(strip=True)`。
+- `episode`：`p.text-anime-number.get_text(strip=True)`；清洗規則見 Requirement 2（去除「第」「集」保留核心編號或如「特別篇」的原樣文字）。
 
 ### D2：資料庫選型與 schema — MariaDB 單表 `anime_schedule`
 
@@ -81,11 +107,14 @@ CREATE TABLE anime_schedule (
 **選擇**：
 
 - 抓取執行時記錄「抓取時刻」`fetched_at`（Asia/Taipei 時區）。
-- 將時刻表中的「週幾 + HH:MM」以 `fetched_at` 所在週為基準，解析為該週對應週幾的 `DATETIME`（存為 Asia/Taipei 本地時間，資料庫設 `time_zone = '+08:00'`）。
+- parser 提供的每筆 `ScheduleCard` 已含 `weekday: int`（0=週一…6=週日，由 `h3.day-title` 文字映射，見 D1 解析路徑）與 `hhmm: str`（`HH:MM`）。
+- `time_utils.to_air_datetime(weekday, hhmm, now)` 以 `fetched_at` 所在週為基準，解析為該週對應週幾的 `DATETIME`（存為 Asia/Taipei 本地時間，資料庫設 `time_zone = '+08:00'`）。
 - 若時刻表顯示的時間 < `fetched_at` 且差距 > 12 小時，視為「本週較早時段（已播）」，仍以本週該週幾解析。
 - 不做跨週推算；當週無法推斷的資料直接略過並記 log。
 
 **理由**：動畫瘋時刻表以「週幾」為單位，需求要求「時間」欄位需可排序可查詢，必須轉絕對時間點。
+
+**上下游假設**：`time_utils` 的 `weekday` 入參語意與 Python `datetime.weekday()` 一致（Monday=0），與 parser 對 `h3.day-title` 的映射表一致；兩端必須同步。
 
 **否決的替代方案**：
 
@@ -156,12 +185,38 @@ baha/
 
 **選擇**：
 
-- 單次執行只對 `/animeList.php` 發一次 GET。
+- 單次執行只對首頁 `/` 發一次 GET。
 - User-Agent 設為識別度高的字串（如 `baha-schedule-scraper/0.1 (+contact)`）。
 - 若回應非 2xx，retry 最多 3 次，每次間隔 2 秒（指數退避）。
 - 執行週期交由使用者於宿主機決定（crontab 等），本 change 不內建排程。
 
 **理由**：避免對動畫瘋造成負擔；同時讓錯誤可以恢復。
+
+### D8：資料來源由 `/animeList.php` 改為首頁 `/` 之 `.programlist-wrap`（2026-04-22 修訂）
+
+**背景**：冒煙測試於真實環境執行 `./run.sh` 後，parser 回傳空清單、pipeline 拋 `ScrapeEmptyError`。根因為：
+
+1. 目標 URL 抓錯頁面：`/animeList.php` 為 A–Z 所有動畫清單，不含時刻表。
+2. DOM 選擇器假設錯誤：原 spec/fixture 假設的 `.schedule-week[data-week="N"] .animate-theme-list .theme-list-block` 結構並不存在於真實頁面。
+
+**選擇**：
+
+- 改以首頁 `https://ani.gamer.com.tw/` 為資料來源。
+- 解析路徑改為 `.programlist-wrap → .programlist-wrap_block → .programlist-block → .day-list`（含 `h3.day-title` 與多個 `a.text-anime-info`），詳見 D1「解析路徑」。
+- `fetcher.DEFAULT_URL` 由 `https://ani.gamer.com.tw/animeList.php` 改為 `https://ani.gamer.com.tw/`。
+- `tests/fixtures/animeList_sample.html` 以宿主真實偵察樣本（`/tmp/ani_root.html`）清洗後的片段取代原合成版本；檔頭以 HTML comment 註明來源日期與清理動作。
+
+**Rejected 替代方案**：
+
+- **維持 `/animeList.php`，改抓每部動畫的詳細頁拼時刻**：成本爆炸（每部動畫一次請求），違反 D7 禮貌原則，且仍需額外來源取得當週排播，否決。
+- **改抓 `/animeRef.php` 等其他頁**：偵察時未見穩定時刻表結構，且 `/` 已足；否決。
+- **反向工程內部 JSON API**：同 D1，條款與穩定度風險高；否決。
+
+**影響**：
+
+- `fetcher.py`、`parser.py`、`tests/fixtures/animeList_sample.html`、`tests/test_parser.py` 皆需依新 DOM 重做，詳見 `tasks.md` 第 10 節。
+- `specs/anime-schedule-scraper/spec.md` 的 Requirement 1 URL 與 Requirement 2 DOM 描述需同步更新。
+- Specialist 已完成的 Task 5.1 / 5.2 / 5.3 / 6.1 / 8.2 部分內容需回退並依新 DOM 重建，詳見 tasks.md checkbox 變更。
 
 ## Risks / Trade-offs
 

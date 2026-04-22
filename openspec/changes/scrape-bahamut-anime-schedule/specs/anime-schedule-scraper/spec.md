@@ -1,8 +1,8 @@
 ## ADDED Requirements
 
-### Requirement: 從動畫瘋時刻表抓取 HTML
+### Requirement: 從動畫瘋首頁抓取週期表 HTML
 
-系統 SHALL 對 <https://ani.gamer.com.tw/animeList.php> 發送 HTTP GET 請求，取得新番時刻表的 HTML 內容，並在成功時回傳 UTF-8 解碼後的字串。
+系統 SHALL 對 <https://ani.gamer.com.tw/> 發送 HTTP GET 請求，取得首頁的 HTML 內容（其中包含 `.programlist-wrap` 週期表區塊），並在成功時回傳 UTF-8 解碼後的字串。
 
 #### Scenario: 正常抓取成功
 
@@ -27,33 +27,66 @@
 - **WHEN** 系統發送請求
 - **THEN** HTTP header `User-Agent` SHALL 包含字串 `baha-schedule-scraper`，並以此與其他爬蟲區分
 
-### Requirement: 解析時刻表 HTML 取得多部動畫資訊
+### Requirement: 解析週期表 HTML 取得多部動畫資訊
 
-系統 SHALL 將抓取的 HTML 解析為結構化物件清單，每個物件至少包含「片名」「集數」「週幾」「HH:MM 時段」四個欄位。系統 SHALL 在單次執行中擷取「多部」動畫，即回傳清單長度 MUST >= 2（當時刻表本身僅有 0 或 1 部動畫時除外）。
+系統 SHALL 將抓取的 HTML 解析為結構化物件清單，每個物件至少包含「片名」「集數」「週幾」「HH:MM 時段」四個欄位。資料來源 DOM 結構如下：
 
-#### Scenario: 正常解析多部動畫
+```
+.programlist-wrap
+  .programlist-wrap_block
+    .programlist-block
+      .day-list
+        h3.day-title              ← 文字「週一」…「週日」
+        a.text-anime-info         ← 每張卡片
+          span.text-anime-time    ← "HH:MM"
+          .text-anime-detail
+            p.text-anime-name     ← 片名
+            p.text-anime-number   ← "第 N 集" / "特別篇" 等
+```
 
-- **WHEN** 輸入 HTML 為 `tests/fixtures/animeList_sample.html`（內含至少 10 部動畫的時刻表區塊）
-- **THEN** 系統回傳長度 >= 10 的清單
-- **AND** 清單中每個物件的 `title` 為非空字串、`episode` 為非空字串、`weekday` 為 0 至 6 的整數（0 = 週一、6 = 週日）、`hhmm` 為 `HH:MM` 格式字串
+`weekday` 由 `h3.day-title` 文字映射：`{"週一":0, "週二":1, "週三":2, "週四":3, "週五":4, "週六":5, "週日":6}`。系統 SHALL 在單次執行中擷取「多部」動畫，即回傳清單長度 MUST >= 2（當時刻表本身僅有 0 或 1 部動畫時除外）。
 
-#### Scenario: 忽略非動畫的干擾區塊
+#### Scenario: 正常解析涵蓋一週七天的動畫
 
-- **WHEN** HTML 含有廣告、登入提示等非時刻表卡片
-- **THEN** 系統 SHALL 僅回傳符合時刻表卡片結構（含片名、集數、週幾、時段）的項目
-- **AND** 對於結構不完整的卡片（缺任一必要欄位），SHALL 略過並以 WARN 等級記錄該卡片的前 200 字原始片段
+- **GIVEN** 輸入 HTML 為 `tests/fixtures/animeList_sample.html`（擷取自動畫瘋首頁真實樣本），其中包含 `.programlist-wrap` 區塊並覆蓋週一至週日共 7 個 `.day-list`，每日至少 1 張 `a.text-anime-info` 卡片，總卡片數 >= 10
+- **WHEN** 呼叫 `parse_schedule(html)`
+- **THEN** 系統回傳長度 >= 10 的 `ScheduleCard` 清單
+- **AND** 清單中每個物件的 `title` 為非空字串、`episode` 為非空字串、`weekday` 為 0 至 6 的整數（0 = 週一、6 = 週日）、`hhmm` 為符合 `^\d{2}:\d{2}$` 的字串
+- **AND** 對每個 `weekday` 值（0 至 6），清單中至少有一筆對應紀錄
+
+#### Scenario: 週別標題無法辨識時略過整個 day-list
+
+- **GIVEN** 某個 `.day-list` 的 `h3.day-title` 文字不屬於 `"週一"`…`"週日"`（例：為空、為「本週特別企劃」、為英文「Mon」）
+- **WHEN** 呼叫 `parse_schedule(html)`
+- **THEN** 系統 SHALL 略過該 `.day-list` 底下所有卡片
+- **AND** 以 WARN 等級記錄 `無法識別的 day-title=<原始文字>`
+
+#### Scenario: 忽略結構不完整的卡片
+
+- **GIVEN** `.day-list` 內的某個 `a.text-anime-info` 缺少 `span.text-anime-time`、`p.text-anime-name`、或 `p.text-anime-number` 任一子節點
+- **WHEN** 呼叫 `parse_schedule(html)`
+- **THEN** 系統 SHALL 僅略過該單一卡片，不影響同 `.day-list` 內其他卡片
+- **AND** 以 WARN 等級記錄該卡片的前 200 字原始片段
+
+#### Scenario: HH:MM 格式不合即略過該卡片
+
+- **GIVEN** 某張 `a.text-anime-info` 的 `span.text-anime-time` 文字不符合 `^\d{2}:\d{2}$`（例：`"待定"`、`"25:00"`、`"1:00"`）
+- **WHEN** 呼叫 `parse_schedule(html)`
+- **THEN** 系統 SHALL 略過該單一卡片並以 WARN 等級記錄不合法的時間字串
 
 #### Scenario: 片名與集數清洗
 
-- **WHEN** 擷取到的片名含前後空白或全形/半形混用
-- **THEN** 系統 SHALL 對片名執行 `strip()` 並保留其餘文字原樣（不自行翻譯或轉換字元）
-- **AND** 集數若形如「第 01 集」，SHALL 保留為字串 `"01"`（去除「第」「集」等文字後的核心數字或特別篇標籤如 `"特別篇"`）
+- **GIVEN** `p.text-anime-name` 文字含前後空白、`p.text-anime-number` 文字形如 `"第 01 集"`
+- **WHEN** 呼叫 `parse_schedule(html)`
+- **THEN** 系統 SHALL 對片名執行 `strip()` 並保留其餘文字原樣（不自行翻譯、不轉換全半形）
+- **AND** 集數形如 `"第 N 集"` 時 SHALL 去除「第」「集」與內部空白後保留核心編號（`"第 01 集"` → `"01"`、`"第 12 集"` → `"12"`）
+- **AND** 集數若為 `"特別篇"`、`"OVA"` 等非「第 N 集」格式，SHALL 保留 `strip()` 後的原字串
 
-#### Scenario: 解析失敗時記錄樣本
+#### Scenario: 找不到 programlist-wrap 時回傳空清單並記錄樣本
 
-- **WHEN** 輸入 HTML 為空字串或為明顯不符合時刻表結構的內容
+- **WHEN** 輸入 HTML 為空字串，或整份 HTML 不含任何 `.programlist-wrap` 節點
 - **THEN** 系統 SHALL 回傳空清單
-- **AND** 以 ERROR 等級記錄「解析失敗」並將 HTML 前 2048 字元寫入 log 供除錯
+- **AND** 以 ERROR 等級記錄「解析失敗：找不到 .programlist-wrap 區塊」並將 HTML 前 2048 字元寫入 log 供除錯
 
 ### Requirement: 爬蟲一次執行即完成抓取—解析—回傳
 
