@@ -31,8 +31,8 @@
 
 ## 6. 抓取模組（含重試）
 
-- [ ] 6.1 實作 `src/baha/fetcher.py`：`fetch_schedule_html(url: str, session: Optional[Session]=None) -> str`；User-Agent 含 `baha-schedule-scraper`；失敗時指數退避重試（2/4/8 秒，最多 4 次），最終失敗拋 `FetchError`。檔案範圍：`src/baha/fetcher.py`。驗收：`anime-schedule-scraper` spec 「正常抓取」「非 2xx 重試」「網路錯誤重試」「User-Agent」四個 scenario 成立（以 mock `requests.Session` 於單元測試驗證）。
-- [ ] 6.2 撰寫 `tests/test_fetcher.py`：以 `unittest.mock` 模擬 `requests.Session`，驗證重試次數、退避時間（以 patch `time.sleep` 記錄呼叫）、User-Agent header。檔案範圍：`tests/test_fetcher.py`。驗收：`pytest tests/test_fetcher.py -v` 全綠。
+- [x] 6.1 實作 `src/baha/fetcher.py`：`fetch_schedule_html(url: str, session: Optional[Session]=None) -> str`；User-Agent 含 `baha-schedule-scraper`；失敗時指數退避重試（2/4/8 秒，最多 4 次），最終失敗拋 `FetchError`。檔案範圍：`src/baha/fetcher.py`。驗收：`anime-schedule-scraper` spec 「正常抓取」「非 2xx 重試」「網路錯誤重試」「User-Agent」四個 scenario 成立（以 mock `requests.Session` 於單元測試驗證）。
+- [x] 6.2 撰寫 `tests/test_fetcher.py`：以 `unittest.mock` 模擬 `requests.Session`，驗證重試次數、退避時間（以 patch `time.sleep` 記錄呼叫）、User-Agent header。檔案範圍：`tests/test_fetcher.py`。驗收：`pytest tests/test_fetcher.py -v` 全綠。
 
 ## 7. Storage 模組（含 upsert）
 
