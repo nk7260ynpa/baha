@@ -44,8 +44,8 @@
 
 ## 8. Pipeline 組裝與入口
 
-- [ ] 8.1 實作 `src/baha/pipeline.py`：`run_once(fetched_at: datetime)` 呼叫 fetcher → parser → time_utils → 組出 `AnimeScheduleRecord` 清單。`main()` 讀 config、設 log、呼叫 `run_once(datetime.now(ZoneInfo("Asia/Taipei")).replace(tzinfo=None))` 並交給 `Storage.upsert_records`，最後以 INFO log 輸出 `UpsertStats`。檔案範圍：`src/baha/pipeline.py`。驗收：`anime-schedule-scraper` spec 中 pipeline 兩個 scenario 成立。
-- [ ] 8.2 撰寫 `tests/test_pipeline.py`：以 mock fetcher + 使用 fixture HTML + mock storage，驗證「部分解析錯誤不中斷」「紀錄筆數 < 2 時拋 `ScrapeEmptyError`」。檔案範圍：`tests/test_pipeline.py`。驗收：`pytest tests/test_pipeline.py -v` 全綠。
+- [x] 8.1 實作 `src/baha/pipeline.py`：`run_once(fetched_at: datetime)` 呼叫 fetcher → parser → time_utils → 組出 `AnimeScheduleRecord` 清單。`main()` 讀 config、設 log、呼叫 `run_once(datetime.now(ZoneInfo("Asia/Taipei")).replace(tzinfo=None))` 並交給 `Storage.upsert_records`，最後以 INFO log 輸出 `UpsertStats`。檔案範圍：`src/baha/pipeline.py`。驗收：`anime-schedule-scraper` spec 中 pipeline 兩個 scenario 成立。
+- [x] 8.2 撰寫 `tests/test_pipeline.py`：以 mock fetcher + 使用 fixture HTML + mock storage，驗證「部分解析錯誤不中斷」「紀錄筆數 < 2 時拋 `ScrapeEmptyError`」。檔案範圍：`tests/test_pipeline.py`。驗收：`pytest tests/test_pipeline.py -v` 全綠。
 
 ## 9. 文件與收尾
 
