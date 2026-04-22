@@ -1,8 +1,8 @@
 ## 1. 專案骨架與相依宣告
 
-- [ ] 1.1 建立 `requirements.txt`，列出 `requests`、`beautifulsoup4`、`lxml`、`PyMySQL`（或 `mysqlclient`，擇一）、`pytest`、`pytest-cov` 版本釘選。檔案範圍：`requirements.txt`。驗收：`pip install -r requirements.txt` 於 Docker build 內成功。
-- [ ] 1.2 建立 `src/baha/__init__.py`、`src/baha/__main__.py` 空殼（`__main__.py` 僅呼叫 `pipeline.main()`）。檔案範圍：`src/baha/__init__.py`、`src/baha/__main__.py`。驗收：`python -c "import baha"` 於 container 內不報錯。
-- [ ] 1.3 在 `.gitignore` 新增 `logs/`、`.env`、`__pycache__/`、`.pytest_cache/`、`*.pyc`、`.coverage`。檔案範圍：`.gitignore`。驗收：`git status` 不再列出這些檔案。
+- [x] 1.1 建立 `requirements.txt`，列出 `requests`、`beautifulsoup4`、`lxml`、`PyMySQL`（或 `mysqlclient`，擇一）、`pytest`、`pytest-cov` 版本釘選。檔案範圍：`requirements.txt`。驗收：`pip install -r requirements.txt` 於 Docker build 內成功。
+- [x] 1.2 建立 `src/baha/__init__.py`、`src/baha/__main__.py` 空殼（`__main__.py` 僅呼叫 `pipeline.main()`）。檔案範圍：`src/baha/__init__.py`、`src/baha/__main__.py`。驗收：`python -c "import baha"` 於 container 內不報錯。
+- [x] 1.3 在 `.gitignore` 新增 `logs/`、`.env`、`__pycache__/`、`.pytest_cache/`、`*.pyc`、`.coverage`。檔案範圍：`.gitignore`。驗收：`git status` 不再列出這些檔案。
 
 ## 2. Docker 與執行入口
 
