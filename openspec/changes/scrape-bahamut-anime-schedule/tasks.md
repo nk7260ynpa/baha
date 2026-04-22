@@ -6,12 +6,12 @@
 
 ## 2. Docker 與執行入口
 
-- [ ] 2.1 撰寫 `docker/Dockerfile`：`FROM python:3.12-slim`，工作目錄 `/app`，先 `COPY requirements.txt` 再安裝，最後 `COPY src/ ./src/`，`ENV PYTHONPATH=/app/src`、`CMD ["python", "-m", "baha"]`。檔案範圍：`docker/Dockerfile`。驗收：`scraper-runtime` spec 中「Dockerfile 指定 Python 3.12」scenario 成立。
-- [ ] 2.2 撰寫 `docker/docker-compose.yaml`：定義 `mariadb`（含 healthcheck、volume、initdb 掛載）與 `app`（build context 指向專案根 `..`，envfile `../.env`，掛載 `../logs:/app/logs`）。檔案範圍：`docker/docker-compose.yaml`。驗收：`anime-schedule-storage` spec 與 `scraper-runtime` spec 中 compose 相關 scenario 成立。
-- [ ] 2.3 撰寫 `docker/build.sh`：`#!/usr/bin/env bash`、`set -euo pipefail`、`cd "$(dirname "$0")"`、`docker compose build`。加入執行權限。檔案範圍：`docker/build.sh`。驗收：`scraper-runtime` spec 中「執行 build.sh 成功建置」scenario 成立。
-- [ ] 2.4 撰寫 `docker/initdb/001_schema.sql`：以 `CREATE TABLE IF NOT EXISTS anime_schedule (...)` 建立表與 unique key，字元集 utf8mb4。檔案範圍：`docker/initdb/001_schema.sql`。驗收：`anime-schedule-storage` spec 中建表 scenario 成立。
-- [ ] 2.5 撰寫 `run.sh`：`set -euo pipefail`；`mkdir -p logs`；`docker compose -f docker/docker-compose.yaml up -d mariadb`；等待 healthy（以 `docker inspect` 輪詢，最多 30 秒）；`docker compose -f docker/docker-compose.yaml run --rm app python -m baha`。加入執行權限。檔案範圍：`run.sh`。驗收：`scraper-runtime` spec 中 `run.sh` 相關 scenario 成立。
-- [ ] 2.6 提供 `.env.example`（納入版控），列出 `DB_HOST=mariadb`、`DB_PORT=3306`、`DB_NAME=baha`、`DB_USER=baha`、`DB_PASSWORD=changeme`、`LOG_LEVEL=INFO`。檔案範圍：`.env.example`。驗收：檔案存在且不包含真實密碼。
+- [x] 2.1 撰寫 `docker/Dockerfile`：`FROM python:3.12-slim`，工作目錄 `/app`，先 `COPY requirements.txt` 再安裝，最後 `COPY src/ ./src/`，`ENV PYTHONPATH=/app/src`、`CMD ["python", "-m", "baha"]`。檔案範圍：`docker/Dockerfile`。驗收：`scraper-runtime` spec 中「Dockerfile 指定 Python 3.12」scenario 成立。
+- [x] 2.2 撰寫 `docker/docker-compose.yaml`：定義 `mariadb`（含 healthcheck、volume、initdb 掛載）與 `app`（build context 指向專案根 `..`，envfile `../.env`，掛載 `../logs:/app/logs`）。檔案範圍：`docker/docker-compose.yaml`。驗收：`anime-schedule-storage` spec 與 `scraper-runtime` spec 中 compose 相關 scenario 成立。
+- [x] 2.3 撰寫 `docker/build.sh`：`#!/usr/bin/env bash`、`set -euo pipefail`、`cd "$(dirname "$0")"`、`docker compose build`。加入執行權限。檔案範圍：`docker/build.sh`。驗收：`scraper-runtime` spec 中「執行 build.sh 成功建置」scenario 成立。
+- [x] 2.4 撰寫 `docker/initdb/001_schema.sql`：以 `CREATE TABLE IF NOT EXISTS anime_schedule (...)` 建立表與 unique key，字元集 utf8mb4。檔案範圍：`docker/initdb/001_schema.sql`。驗收：`anime-schedule-storage` spec 中建表 scenario 成立。
+- [x] 2.5 撰寫 `run.sh`：`set -euo pipefail`；`mkdir -p logs`；`docker compose -f docker/docker-compose.yaml up -d mariadb`；等待 healthy（以 `docker inspect` 輪詢，最多 30 秒）；`docker compose -f docker/docker-compose.yaml run --rm app python -m baha`。加入執行權限。檔案範圍：`run.sh`。驗收：`scraper-runtime` spec 中 `run.sh` 相關 scenario 成立。
+- [x] 2.6 提供 `.env.example`（納入版控），列出 `DB_HOST=mariadb`、`DB_PORT=3306`、`DB_NAME=baha`、`DB_USER=baha`、`DB_PASSWORD=changeme`、`LOG_LEVEL=INFO`。檔案範圍：`.env.example`。驗收：檔案存在且不包含真實密碼。
 
 ## 3. Logging 與 Config
 

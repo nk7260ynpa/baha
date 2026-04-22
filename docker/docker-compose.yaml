@@ -1,0 +1,46 @@
+# Docker Compose 編排 app 與 MariaDB 服務。
+#
+# - mariadb: 基於 mariadb:11，使用 named volume 持久化，掛載 initdb 自動建表。
+# - app: 由 docker/Dockerfile 建置，depends_on mariadb healthcheck。
+# - 兩個 service 使用同一預設 network，app 透過服務名稱 mariadb 連線。
+
+services:
+  mariadb:
+    image: mariadb:11
+    container_name: baha-mariadb
+    restart: unless-stopped
+    environment:
+      MARIADB_DATABASE: ${DB_NAME:-baha}
+      MARIADB_USER: ${DB_USER:-baha}
+      MARIADB_PASSWORD: ${DB_PASSWORD:-changeme}
+      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-rootchangeme}
+    ports:
+      - "3306:3306"
+    volumes:
+      - baha_mariadb_data:/var/lib/mysql
+      - ./initdb:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+  app:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    image: baha-app:latest
+    container_name: baha-app
+    env_file:
+      - ../.env
+    depends_on:
+      mariadb:
+        condition: service_healthy
+    volumes:
+      - ../logs:/app/logs
+    # 預設由 Dockerfile 的 CMD 執行 python -m baha；可由 `docker compose run --rm app pytest` 覆蓋。
+
+volumes:
+  baha_mariadb_data:
+    name: baha_mariadb_data
