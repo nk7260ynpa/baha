@@ -16,7 +16,7 @@ from requests import Session
 
 logger = logging.getLogger(__name__)
 
-DEFAULT_URL = "https://ani.gamer.com.tw/animeList.php"
+DEFAULT_URL = "https://ani.gamer.com.tw/"
 USER_AGENT = "baha-schedule-scraper/0.1 (+https://github.com/local/baha)"
 _MAX_ATTEMPTS = 4
 _BACKOFF_SECONDS: tuple[int, ...] = (2, 4, 8)

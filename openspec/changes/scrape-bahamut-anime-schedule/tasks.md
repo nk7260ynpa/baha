@@ -85,7 +85,7 @@
   - `anime-schedule-scraper` spec Requirement 2 的全部 5 個 scenario 通過。
   - 不修改範圍外檔案。
 
-- [ ] 10.3 更新 `src/baha/fetcher.py` 的 `DEFAULT_URL` 由 `https://ani.gamer.com.tw/animeList.php` 改為 `https://ani.gamer.com.tw/`；其餘重試、退避、User-Agent、錯誤型別維持不變。
+- [x] 10.3 更新 `src/baha/fetcher.py` 的 `DEFAULT_URL` 由 `https://ani.gamer.com.tw/animeList.php` 改為 `https://ani.gamer.com.tw/`；其餘重試、退避、User-Agent、錯誤型別維持不變。
   檔案範圍：`src/baha/fetcher.py`。驗收：
   - 常數值為 `https://ani.gamer.com.tw/`（結尾含斜線）。
   - `tests/test_fetcher.py` 既有 scenario（正常抓取、非 2xx 重試、網路錯誤重試、User-Agent）維持全綠；若測試寫死舊 URL，必須同步更新測試之期待值（檔案範圍加入 `tests/test_fetcher.py`）。
