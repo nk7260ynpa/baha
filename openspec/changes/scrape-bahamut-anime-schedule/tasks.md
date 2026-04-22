@@ -15,8 +15,8 @@
 
 ## 3. Logging 與 Config
 
-- [ ] 3.1 實作 `src/baha/config.py`：讀取環境變數並提供 `AppConfig` dataclass（含 DB_* 與 LOG_LEVEL）；未設定必要欄位時拋 `ConfigError`。檔案範圍：`src/baha/config.py`。驗收：`anime-schedule-storage` spec 「環境變數缺失時拒絕啟動」scenario。
-- [ ] 3.2 實作 `src/baha/logging_setup.py`：同時輸出 stdout 與 `/app/logs/baha-YYYYMMDD.log`，格式 `%(asctime)s %(levelname)s %(name)s %(message)s`，level 由 `AppConfig.log_level` 決定。檔案範圍：`src/baha/logging_setup.py`。驗收：`scraper-runtime` spec 日誌相關三個 scenario 成立。
+- [x] 3.1 實作 `src/baha/config.py`：讀取環境變數並提供 `AppConfig` dataclass（含 DB_* 與 LOG_LEVEL）；未設定必要欄位時拋 `ConfigError`。檔案範圍：`src/baha/config.py`。驗收：`anime-schedule-storage` spec 「環境變數缺失時拒絕啟動」scenario。
+- [x] 3.2 實作 `src/baha/logging_setup.py`：同時輸出 stdout 與 `/app/logs/baha-YYYYMMDD.log`，格式 `%(asctime)s %(levelname)s %(name)s %(message)s`，level 由 `AppConfig.log_level` 決定。檔案範圍：`src/baha/logging_setup.py`。驗收：`scraper-runtime` spec 日誌相關三個 scenario 成立。
 
 ## 4. 時間工具（純函式優先）
 
